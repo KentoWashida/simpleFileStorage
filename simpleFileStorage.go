@@ -46,14 +46,14 @@ func ReadFile(fileName string) ([]byte, error) {
 func WriteFile(fileName string, wdata []byte) error {
 	mu.Lock()
 	os.MkdirAll(filepath.Dir(fileName), 0774)
-	err := ioutil.WriteFile(fileName, wdata, 0774)
+	err := ioutil.WriteFile(fileName, wdata, 0664)
 	mu.Unlock()
 	return err
 }
 
 func AddFile(fileName string, wdata []byte) error {
 	mu.Lock()
-	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0774)
+	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0664)
 	if err != nil {
 		return err
 	}
@@ -61,4 +61,11 @@ func AddFile(fileName string, wdata []byte) error {
 	file.Close()
 	mu.Unlock()
 	return nil
+}
+
+func DeleteFile(fileName string) error {
+	mu.Lock()
+	err := os.Remove(fileName)
+	mu.Unlock()
+	return err
 }
